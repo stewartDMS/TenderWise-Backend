@@ -1,0 +1,116 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id        String   @id @default(uuid())
+  email     String   @unique
+  password  String
+  firstName String
+  lastName  String
+  role      String   @default("user") // user, admin
+  companyId String?
+  company   Company? @relation(fields: [companyId], references: [id])
+  tenders   Tender[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("users")
+}
+
+model Company {
+  id          String   @id @default(uuid())
+  name        String
+  industry    String?
+  size        String?
+  description String?
+  users       User[]
+  tenders     Tender[]
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  @@map("companies")
+}
+
+model Tender {
+  id          String     @id @default(uuid())
+  title       String
+  description String?
+  clientName  String
+  deadline    DateTime?
+  status      String     @default("draft") // draft, in_progress, submitted, won, lost
+  budget      Float?
+  userId      String
+  user        User       @relation(fields: [userId], references: [id])
+  companyId   String?
+  company     Company?   @relation(fields: [companyId], references: [id])
+  documents   Document[]
+  lineItems   LineItem[]
+  analyses    Analysis[]
+  createdAt   DateTime   @default(now())
+  updatedAt   DateTime   @updatedAt
+
+  @@map("tenders")
+}
+
+model Document {
+  id           String    @id @default(uuid())
+  tenderId     String
+  tender       Tender    @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  filename     String
+  originalName String
+  fileType     String // pdf, docx, xlsx
+  fileSize     Int
+  filePath     String
+  uploadedAt   DateTime  @default(now())
+  parsedData   Json? // Store parsed content
+  lineItems    LineItem[]
+
+  @@map("documents")
+}
+
+model LineItem {
+  id          String    @id @default(uuid())
+  tenderId    String
+  tender      Tender    @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  documentId  String?
+  document    Document? @relation(fields: [documentId], references: [id], onDelete: SetNull)
+  item        String
+  description String?
+  quantity    Float?
+  unit        String?
+  unitPrice   Float?
+  totalPrice  Float?
+  category    String?
+  notes       String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  @@map("line_items")
+}
+
+model Analysis {
+  id                 String   @id @default(uuid())
+  tenderId           String
+  tender             Tender   @relation(fields: [tenderId], references: [id], onDelete: Cascade)
+  analysisType       String // risk, pricing, decision, scope
+  summary            String?
+  details            Json? // Detailed analysis data
+  riskScore          Float?
+  winProbability     Float?
+  recommendation     String? // bid, no_bid, conditional
+  recommendationNote String?
+  aiModel            String? // Model used for analysis
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("analyses")
+}

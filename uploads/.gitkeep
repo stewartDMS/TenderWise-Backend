@@ -1,0 +1,5 @@
+# Uploads Directory
+
+This directory stores uploaded tender documents (PDF, DOCX, XLSX).
+
+Files in this directory are excluded from version control except for this .gitkeep file.
