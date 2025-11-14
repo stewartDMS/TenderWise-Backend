@@ -2,11 +2,12 @@ import { Router } from 'express';
 import { uploadController } from '../controllers/upload.controller';
 import { authMiddleware } from '../middleware/auth';
 import { uploadMultiple } from '../middleware/upload';
+import { uploadLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // All upload routes require authentication
-router.use(authMiddleware);
+router.use(uploadLimiter, authMiddleware);
 
 /**
  * @route   POST /api/upload

@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { tenderController } from '../controllers/tender.controller';
 import { authMiddleware } from '../middleware/auth';
+import { apiLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // All tender routes require authentication
-router.use(authMiddleware);
+router.use(apiLimiter, authMiddleware);
 
 /**
  * @route   POST /api/tenders

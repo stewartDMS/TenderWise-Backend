@@ -1,11 +1,12 @@
 import { Router } from 'express';
 import { analysisController } from '../controllers/analysis.controller';
 import { authMiddleware } from '../middleware/auth';
+import { analysisLimiter } from '../middleware/rateLimiter';
 
 const router = Router();
 
 // All analysis routes require authentication
-router.use(authMiddleware);
+router.use(analysisLimiter, authMiddleware);
 
 /**
  * @route   POST /api/analyze/risk
