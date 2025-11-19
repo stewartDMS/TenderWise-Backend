@@ -75,6 +75,9 @@ npm run prisma:studio
 
 ## 📡 API Endpoints
 
+### Health Check
+- `GET /health` - Check if backend is running (no authentication required)
+
 ### Authentication (`/api/auth`)
 - `POST /api/auth/register` - Register new user
 - `POST /api/auth/login` - User login
