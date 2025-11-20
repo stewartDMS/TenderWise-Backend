@@ -13,6 +13,26 @@ Authorization: Bearer <your_token>
 
 ---
 
+## Health Check
+
+### Check API Status
+**GET** `/health`
+
+A simple health check endpoint to verify the backend is running and reachable.
+
+**No authentication required**
+
+**Response:**
+```json
+{
+  "status": "ok",
+  "message": "TenderWise Backend API is running",
+  "timestamp": "2024-01-01T00:00:00.000Z"
+}
+```
+
+---
+
 ## Authentication Endpoints
 
 ### Register User
